@@ -8,6 +8,6 @@ RUN mkdir /opt/vosk-model-ca \
    && mv catalan-bigger-${MODEL_VERSION} model \
    && rm -rf catalan-bigger-${MODEL_VERSION}.zip
 
-EXPOSE 2700
-WORKDIR /opt/vosk-server/websocket
-CMD [ "python3", "./asr_server.py", "/opt/vosk-model-ca/model" ]
+EXPOSE 5001
+WORKDIR /opt/vosk-server/grpc
+CMD [ "python3", "./stt_server.py", "/opt/vosk-model-ca/model" ]
