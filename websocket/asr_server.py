@@ -20,6 +20,7 @@ vosk_interface = os.environ.get('VOSK_SERVER_INTERFACE', '0.0.0.0')
 vosk_port = int(os.environ.get('VOSK_SERVER_PORT', 2700))
 vosk_model_path = os.environ.get('VOSK_MODEL_PATH', 'model')
 vosk_sample_rate = float(os.environ.get('VOSK_SAMPLE_RATE', 8000))
+vosk_alternatives = int(os.environ.get('VOSK_ALTERNATIVES', 0))
 
 if len(sys.argv) > 1:
    vosk_model_path = sys.argv[1]
@@ -66,9 +67,10 @@ async def recognize(websocket, path):
         # Create the recognizer, word list is temporary disabled since not every model supports it
         if not rec:
             if phrase_list:
-                 rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list))
+                 rec = KaldiRecognizer(model, sample_rate, json.dumps(phrase_list, ensure_ascii=False))
             else:
                  rec = KaldiRecognizer(model, sample_rate)
+            rec.SetMaxAlternatives(vosk_alternatives)
 
         response, stop = await loop.run_in_executor(pool, process_chunk, rec, message)
         await websocket.send(response)
